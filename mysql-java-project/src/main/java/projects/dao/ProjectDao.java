@@ -189,6 +189,7 @@ public class ProjectDao extends DaoBase {
 
 	public boolean modifyProjectDetails(Project project) {
 		// TODO Auto-generated method stub
+//		update sql statement
 		// @formatter: off
 		String sql = ""
 				+ "UPDATE " + PROJECT_TABLE + " SET "
@@ -199,28 +200,37 @@ public class ProjectDao extends DaoBase {
 				+ "notes = ? "
 				+ "WHERE project_id = ?";
 		// @formmater: on
-		
+//		try to connect to server
 		try (Connection conn = DbConnection.getConnection()) {
+//			if successful start transaction
 			startTransaction(conn);
 			try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+//				attempt to update the values projectName, estimatedHours, actualHours, difficulty, and notes
 				setParameter(stmt, 1, project.getProjectName(), String.class);
 				setParameter(stmt, 2, project.getEstimatedHours(), BigDecimal.class);
 				setParameter(stmt, 3, project.getActualHours(), BigDecimal.class);
 				setParameter(stmt, 4, project.getDifficulty(), Integer.class);
 				setParameter(stmt, 5, project.getNotes(), String.class);
+//				set project id
 				setParameter(stmt, 6, project.getProjectId(), Integer.class);
-				
+//				set boolean modified to stmt.executeUpdate() == 1
 				boolean modified = stmt.executeUpdate() == 1;
+//				commit transaction
 				commitTransaction(conn);
-				
+//				return modified
 				return modified;
 			} 
+//			if changes fail
 			catch(Exception e) {
+//				roll back transaction
 				rollbackTransaction(conn);
+//				throw an exception
 				throw new DbException(e);
 			}
 		}
+//		if SQL fails
 		catch(SQLException e) {
+//			throw a SQL exception
 			throw new DbException(e);
 		}
 	}
@@ -231,23 +241,32 @@ public class ProjectDao extends DaoBase {
 		// @formatter:off
 		String sql = "DELETE FROM " + PROJECT_TABLE + " WHERE project_id = ?; ";
 		// @formatter:on
-		// get connection
+//		attempt connection
 		try (Connection conn = DbConnection.getConnection()) {
+//			start transaction
 			startTransaction(conn);
+//			attempt to process sql statement
 			try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+//				if successful set the projectId to the user input projectId
 				setParameter(stmt, 1, projectId, Integer.class);
-				
+//				set boolean deleted to the stmt.executeUpdate() == 1
 				boolean deleted = stmt.executeUpdate() == 1;
-				
+//				commit transaction
 				commitTransaction(conn);
+//				return deleted
 				return deleted;
 			}
+//			if transaction fails
 			catch(Exception e) {
+//				roll back transaction
 				rollbackTransaction(conn);
+//				throw an exception
 				throw new DbException(e);
 			}
 		}
+//		if connection fails
 		catch(Exception e) {
+//			throw a new exception
 			throw new DbException(e);
 		}
 	}

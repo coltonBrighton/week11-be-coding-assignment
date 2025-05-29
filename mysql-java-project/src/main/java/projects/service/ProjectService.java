@@ -8,7 +8,7 @@ import projects.entity.Project;
 import projects.exception.DbException;
 
 public class ProjectService {
-	
+//	instantiate a new projectDao object of type ProjectDao
 	private ProjectDao projectDao = new ProjectDao();
 
 	public Project addProject(Project project) {
@@ -28,14 +28,18 @@ public class ProjectService {
 
 	public void modifyProjectDetails(Project project) {
 		// TODO Auto-generated method stub
+//		if project does not exist 
 		if(!projectDao.modifyProjectDetails(project)) {
+//			throw a new exception stating the project id the user had selected does not exist
 			throw new DbException("Project with ID=" + project.getProjectId() + " does not exist.");
 		}
 	}
 
 	public void deleteProject(Integer projectId) {
 		// TODO Auto-generated method stub
+//		if project does not exist
 		if(!projectDao.deleteProject(projectId)) {
+//			throw an exception stating the project id the user selected does not exist
 			throw new DbException("Project with ID=" + projectId + " does not exist.");
 		}
 	}

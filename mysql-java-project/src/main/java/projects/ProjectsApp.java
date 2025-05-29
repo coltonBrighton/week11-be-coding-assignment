@@ -10,10 +10,14 @@ import projects.exception.DbException;
 import projects.service.ProjectService;
 
 public class ProjectsApp {
+	
+	// scanner to take in user input
 	private Scanner scanner = new Scanner(System.in);
+	// instantiate a new ProjectService object called projectService
 	private ProjectService projectService = new ProjectService();
 	private Project curProject;
 	
+	// menu options
 	// @formatter:off
 	private List<String> operations = List.of(
 			"1) Add a project",
@@ -23,7 +27,7 @@ public class ProjectsApp {
 			"5) Delete a project"
 	);
 	// @formatter:on
-	
+	// user menu selection if you hit enter menu exits
 	private void processUserSelection() {
 		// TODO Auto-generated method stub
 		boolean done = false;
@@ -66,21 +70,31 @@ public class ProjectsApp {
 	
 	private void deleteProject() {
 		// TODO Auto-generated method stub
+		// get a list of projects
 		listProjects();
+		// prompt user to insert the id of the item that they want to delete 
+		// use getIntInput to grab the integer that the user input.
 		Integer projectId = getIntInput("\nPlease enter the ID of the project you would like to delete");
+		// call delete project from projectService
 		projectService.deleteProject(projectId);
+		// project was deleted successfully message
 		System.out.println("Project " + projectId + " was deleted successfully.");
+		// if curProject is not null and curProject id is the same as project id
 		if (Objects.nonNull(curProject) && curProject.getProjectId().equals(projectId)) {
+			// set curProject to null
 			curProject = null;
 		}
 	}
 
 	private void updateProjectDetails() {
 		// TODO Auto-generated method stub
+		// if curProject is null
 		if (curProject == null) {
+			// prompt the user to select a project
 			System.out.println("\nPlease select a project.");
 		}
 		
+		// set projectName, estimatedHours, acutalHours, difficulty, and notes to user input values
 		String projectName = 
 				getStringInput("Enter the project name [" + curProject.getProjectName() + "]");
 		
@@ -96,17 +110,23 @@ public class ProjectsApp {
 		String notes =
 				getStringInput("Enter the project notes [" + curProject.getNotes() + "]");
 		
+		// instantiate a new project
 		Project project = new Project();
 		
+		// set projectId to curProjectId
 		project.setProjectId(curProject.getProjectId());
+		// if projectName, estimatedHours, actualHours, difficulty, and notes are null
+		// grab the user input, or set values to projectName, estimatedHours, actualHours, difficulty, and notes
 		project.setProjectName(Objects.isNull(projectName) ? curProject.getProjectName() : projectName);
 		project.setEstimatedHours(Objects.isNull(estimatedHours) ? curProject.getEstimatedHours() : estimatedHours);
 		project.setActualHours(Objects.isNull(actualHours) ? curProject.getActualHours() : actualHours);
 		project.setDifficulty(Objects.isNull(difficulty) ? curProject.getDifficulty() : difficulty);
 		project.setNotes(Objects.isNull(notes) ? curProject.getNotes() : notes);
 		
+		// call modifyProjectDetails method from projectService
 		projectService.modifyProjectDetails(project);
 		
+		// set curProject to the project with the same id by calling fetchProjectById from projectService
 		curProject = projectService.fetchProjectById(curProject.getProjectId());
 	}
 
